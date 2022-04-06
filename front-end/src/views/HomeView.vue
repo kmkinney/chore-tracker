@@ -2,8 +2,8 @@
   <div class="home">
       <h1 class="title">Chore Tracker</h1>
       <h2 class="subtitle">Kevin Kinney</h2>
-      <ChoreChart v-show="false"/>
-      <CreateView/>
+      <ChoreChart v-show="true"/>
+      <CreateView v-show="false"/>
   </div>
 </template>
 
@@ -16,7 +16,7 @@ export default {
   name: 'HomeView',
   components: {
       ChoreChart,
-      CreateView
+      CreateView,
   }
 }
 </script>
