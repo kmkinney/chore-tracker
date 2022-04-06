@@ -2,18 +2,21 @@
   <div class="home">
       <h1 class="title">Chore Tracker</h1>
       <h2 class="subtitle">Kevin Kinney</h2>
-      <ChoreChart/>
+      <ChoreChart v-show="false"/>
+      <CreateView/>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
 import ChoreChart from "@/components/ChoreChart.vue"
+import CreateView from "./CreateView.vue"
 
 export default {
   name: 'HomeView',
   components: {
-      ChoreChart
+      ChoreChart,
+      CreateView
   }
 }
 </script>
