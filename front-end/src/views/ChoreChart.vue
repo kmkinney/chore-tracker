@@ -1,6 +1,7 @@
 <template>
-  <div class="chart">
-      <nav-header/>
+  <div class="chart" v-if="!loading">
+    <nav-header />
+    <button class="add-chore" @click.prevent="openAddChore">Add Chore</button>
     <div class="chart-grid-row header-row">
       <div class="chart-grid-box" style="grid-area: name">
         <span class="header">Name</span>
@@ -17,105 +18,124 @@
     <div
       class="chart-grid-row person-row"
       v-for="person in chart.people"
-      :key="person.id"
+      :key="person._id"
     >
       <span class="person-name">
         {{ person.name }}
       </span>
       <div
         class="chart-grid-box"
-        v-for="day in person.days"
-        :key="day.name"
-        :style="{ gridArea: day.name }"
+        v-for="day in daysOfWeekLower"
+        :key="day"
+        :style="{ gridArea: day }"
       >
         <a
           class="chore"
-          v-for="chore in day.chores"
-          :key="`${day.name}-${chore.id}`"
+          :class="{done: chore.done}"
+          v-for="chore in getChores(person._id, day)"
+          :key="chore._id"
           @click.prevent="openModal(chore)"
         >
-          {{ getChoreById(chore.id).name }}
+          {{ chore.name }}
         </a>
       </div>
     </div>
-    <ChoreModal
-      :chore="{
-        name: 'test',
-        description: 'test',
-        id: 'abcd',
-      }"
+    <chore-modal
+      :chore="selectedChore"
+      @update="getChoreList"
     />
+    <add-chore-modal :people="chart.people" @update="getChoreList"/>
   </div>
 </template>
 
 <script>
 import ChoreModal from "../components/ChoreModal.vue";
-import axios from 'axios';
-import NavHeader from '@/components/NavHeader.vue';
+import axios from "axios";
+import NavHeader from "@/components/NavHeader.vue";
+import AddChoreModal from "@/components/AddChoreModal.vue";
 
 export default {
   name: "ChoreChart",
   components: {
     ChoreModal,
     NavHeader,
+    AddChoreModal,
   },
   data() {
-    NavHeader
     return {
       id: this.$route.params.id,
       chart: {},
-      people: [],
-      clickedName: "",
-      clickedDescription: "",
-      clickedComplete: false,
+      choreList: {},
+      loading: false,
+      selectedChore: {},
     };
   },
-  created() {
-      this.getChart()
+  async created() {
+    await this.getChart();
+    await this.getChoreList();
   },
   methods: {
     async getChoreById(id) {
-        try {
-            const resp = await axios.get(`/api/chores/${id}`)
-            const chore = resp.data
-            return chore
-        } catch(err) {
-            console.log(err)
-        }
+      try {
+        const resp = await axios.get(`/api/chores/${id}`);
+        const chore = resp.data;
+        return chore;
+      } catch (err) {
+        console.log(err);
+      }
     },
     openModal(chore) {
-      //   let choreData = this.getChoreById(chore.id);
-      //   this.clickedName = choreData.name;
-      //   this.clickedDescription = choreData.description;
-      //   this.clickedComplete = chore.done;
-      //   this.isModalOpen = true;
       console.log(chore);
-      let choreModal = document.querySelector(`#abcd`);
+      this.selectedChore = chore
+      let choreModal = document.querySelector(`#view-chore`);
       choreModal.showModal();
     },
-    closeModal() {
-      this.isModalOpen = false;
+    openAddChore() {
+      let addModal = document.querySelector("#add-chore");
+      addModal.showModal();
     },
     async getChart() {
-        try {
-            const resp = await axios.get(`/api/charts/${this.id}`)
-            const chart = await resp.data
-            this.chart = chart
-            console.log(chart)
-        } catch(err) {
-            console.log(err)
-        }
+      try {
+          this.loading=true
+        const resp = await axios.get(`/api/charts/${this.id}`);
+        const chart = await resp.data;
+        this.chart = chart;
+        this.people = chart.people;
+        console.log("CHART",chart);
+      } catch (err) {
+        console.log(err);
+      }
     },
-    async getChoreList(person) {
-        let id = person._id
-        let chores = []
-        try {
-            const resp = await axios.get(`/api/chores/person/${id}`)
-            chores = resp.data
-            console.log(chores)
-        } catch(err) {
-            console.log(err)
+    async getChoreList() {
+      try {
+          this.loading = true
+        for (let person of this.chart.people) {
+          let id = person._id;
+          let days = {};
+          for (let day of this.daysOfWeekLower) {
+            days[day] = [];
+          }
+          const resp = await axios.get(`/api/chores/person/${id}`);
+          let chores = resp.data;
+          for (let chore of chores) {
+            let day = chore.day;
+            days[day].push(chore);
+          }
+          this.choreList[id] = days;
+          this.loading = false
         }
+        console.log("LIST", this.choreList);
+        this.loading = false
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    getChores(person, day) {
+        let list = this.choreList[person]
+        if(!list){
+            return []
+        }
+        return list[day]
     }
   },
   computed: {
@@ -128,6 +148,17 @@ export default {
         "Thursday",
         "Friday",
         "Saturday",
+      ];
+    },
+    daysOfWeekLower() {
+      return [
+        "sunday",
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
       ];
     },
   },
@@ -183,5 +214,18 @@ export default {
   background-color: var(--yellow);
   padding: 4px 10px;
   border-radius: 5px;
+}
+
+.done {
+    text-decoration: line-through;
+}
+
+.add-chore {
+    background: var(--yellow);
+    padding: 20px;
+    margin-bottom: 20px;
+    border:none;
+    border-radius: 7px;
+    font-size: 1rem;
 }
 </style>

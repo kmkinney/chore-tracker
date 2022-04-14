@@ -1,8 +1,17 @@
 <template>
   <nav class="nav">
+    <a href="https://github.com/kmkinney/chore-tracker">Github Repo</a>
     <ul class="nav-links">
-      <li><router-link class="link" :to="{path:'/create'}">Create Chart</router-link></li>
-      <li><router-link class="link" :to="{path:'/select'}">Select Chart</router-link></li>
+      <li>
+        <router-link class="link" :to="{ path: '/create' }"
+          >Create Chart</router-link
+        >
+      </li>
+      <li>
+        <router-link class="link" :to="{ path: '/select' }"
+          >Select Chart</router-link
+        >
+      </li>
     </ul>
     <h1 class="title">Chore Tracker</h1>
   </nav>
@@ -24,18 +33,18 @@ export default {
 }
 
 .nav-links {
-    display: flex;
-    list-style: none;
-    justify-content: space-around;
+  display: flex;
+  list-style: none;
+  justify-content: space-around;
 }
 
 .link {
-    color: var(--green);
-    font-size: 1.5rem;
-    text-decoration: none;
+  color: var(--green);
+  font-size: 1.5rem;
+  text-decoration: none;
 }
 .link:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .title {

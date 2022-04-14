@@ -63,10 +63,20 @@ router.post('/person/:person', async (req, res) => {
             person: req.person
         })
         await chore.save()
-        return res.sendStatus(200)
+        return res.send(chore)
     } catch(err) {
         console.log(err)
         return res.status(500).send(err)
+    }
+})
+
+router.put('/:chore', async (req, res) => {
+    try {
+        req.chore.done = req.body.done;
+        await req.chore.save()
+        return res.sendStatus(200)
+    } catch(err) {
+        console.log(err)
     }
 })
 
@@ -77,6 +87,16 @@ router.get('/person/:person', async (req, res) => {
         }).populate('person')
         return res.send(chores)
     } catch(err) {
+        console.log(err)
+        return res.status(500).send(err)
+    }
+})
+
+router.delete('/:chore', async (req, res) => {
+    try {
+        await Chore.deleteOne({_id: req.chore._id})
+        return res.sendStatus(200)
+    } catch (err) {
         console.log(err)
         return res.status(500).send(err)
     }
