@@ -54,6 +54,10 @@ export default {
     close() {
       let modal = document.querySelector("#add-chore");
       modal.close();
+      this.selectedPerson = {}
+      this.choreName = ""
+      this.choreDescription = ""
+      this.choreDay = ""
       this.$emit('update')
     },
     async add() {

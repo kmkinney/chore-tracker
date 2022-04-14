@@ -1,5 +1,5 @@
 <template>
-  <div class="chart" v-if="!loading">
+  <div class="chart">
     <nav-header />
     <button class="add-chore" @click.prevent="openAddChore">Add Chore</button>
     <div class="chart-grid-row header-row">
@@ -109,6 +109,7 @@ export default {
     async getChoreList() {
       try {
           this.loading = true
+          let newList = {}
         for (let person of this.chart.people) {
           let id = person._id;
           let days = {};
@@ -121,17 +122,19 @@ export default {
             let day = chore.day;
             days[day].push(chore);
           }
-          this.choreList[id] = days;
-          this.loading = false
+          newList[id] = days;
         }
         console.log("LIST", this.choreList);
+        this.choreList = newList
         this.loading = false
       } catch (err) {
         console.log(err);
       }
     },
     getChores(person, day) {
+        console.log(person, day)
         let list = this.choreList[person]
+        console.log(person in this.choreList)
         if(!list){
             return []
         }
