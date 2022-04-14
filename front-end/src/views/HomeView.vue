@@ -1,22 +1,20 @@
 <template>
   <div class="home">
-      <h1 class="title">Chore Tracker</h1>
-      <h2 class="subtitle">Kevin Kinney</h2>
-      <ChoreChart v-show="true"/>
-      <CreateView v-show="false"/>
+      <nav-header/>
+      <!-- <CreateView v-show="true"/> -->
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import ChoreChart from "@/components/ChoreChart.vue"
-import CreateView from "./CreateView.vue"
+import NavHeader from "@/components/NavHeader.vue"
+// import CreateView from "./CreateView.vue"
 
 export default {
   name: 'HomeView',
   components: {
-      ChoreChart,
-      CreateView,
+    //   CreateView,
+      NavHeader,
   }
 }
 </script>

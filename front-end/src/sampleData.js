@@ -1,5 +1,5 @@
 export const choreChart = {
-    name: 'Kevins Chore Chart',
+    name: 'Kevin\'s Chore Chart',
     people: [
         {
             id: 1,

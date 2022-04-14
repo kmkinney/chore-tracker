@@ -1,5 +1,6 @@
 <template>
   <div class="create">
+      <nav-header/>
     <h2 class="subtitle">Create Chore Chart</h2>
     <div class="form">
       <h3>Chart Name:</h3>
@@ -18,20 +19,6 @@
         <button class="add-btn" @click.prevent="addPerson">Add</button>
       </div>
 
-      <h3>Chores:</h3>
-      <div v-for="(chore, index) in chores" :key="`chore-${index}`">
-        <p>{{ chore.name }}</p>
-        <button class="rm-btn" @click.prevent="removeChore(index)">X</button>
-      </div>
-      <div>
-        <input
-          @keyup.enter="addChore"
-          v-model="choreName"
-          placeholder="Chore Name"
-        />
-        <button class="add-btn" @click.prevent="addChore">Add</button>
-      </div>
-
       <button class="create-btn" type="submit" @click.prevent="createChart()">
         Create Chart
       </button>
@@ -41,16 +28,18 @@
 
 <script>
 // @ is an alias to /src
+import NavHeader from '@/components/NavHeader.vue';
+import axios from 'axios'
 
 export default {
   name: "CreateView",
-  components: {},
+  components: {
+      NavHeader
+  },
   data() {
     return {
       name: "",
       personName: "",
-      choreName: "",
-      chores: [],
       people: [],
     };
   },
@@ -61,17 +50,19 @@ export default {
         this.personName = "";
       }
     },
-    addChore() {
-      if (this.choreName !== "") {
-        this.chores.push({ name: this.choreName });
-        this.choreName = "";
-      }
-    },
-    removeChore(index) {
-        this.chores.splice(index, 1)
-    },
     removePerson(index) {
         this.people.splice(index,1)
+    },
+    async createChart() {
+        try {
+            const resp = await axios.post('/api/charts', {
+                name: this.name,
+                people: this.people,
+            })
+            this.$router.push({path:`/chart/${resp.data._id}`})
+        } catch(err) {
+            console.log(err)
+        }
     }
   },
 };

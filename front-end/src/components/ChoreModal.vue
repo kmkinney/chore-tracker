@@ -1,25 +1,24 @@
 <template>
-  <div class="modal">
-    <h2>{{name}}</h2>
-    <p>{{description}}</p>
+  <dialog class="modal" :id="chore.id">
+    <h2>{{ chore.name }}</h2>
+    <p>{{ chore.description }}</p>
     <div class="buttons">
       <button class="close-btn" @click="close">Complete</button>
       <button class="delete-btn" @click="deleteChore">Delete</button>
     </div>
-  </div>
+  </dialog>
 </template>
 
 <script>
 export default {
   name: "ChoreModal",
   props: {
-      name: String,
-      description: String,
-      complete: Boolean,
+    chore: Object,
   },
   methods: {
     close() {
-      this.$emit("complete");
+      let modal = document.querySelector("#abcd");
+      modal.close();
     },
     deleteChore() {
       this.$emit("delete");
@@ -30,11 +29,11 @@ export default {
 
 <style scoped>
 .modal {
-  position: absolute;
+  /* position: absolute;
   left: 0;
   right: 0;
   top: 0;
-  bottom: 0;
+  bottom: 0; */
   margin: auto;
   height: fit-content;
   width: fit-content;

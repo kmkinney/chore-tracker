@@ -1,23 +1,45 @@
 <template>
-  <div class="select"></div>
+  <div class="select">
+      <nav-header/>
+      <div v-for="chart in charts" :key="chart._id">
+          <router-link class="chart-link" :to="{name: 'chart', params: {id: chart._id}}">{{chart.name}}</router-link>
+      </div>
+  </div>
 </template>
 
 <script>
-import choreChart from "../sampleData";
+import NavHeader from "@/components/NavHeader.vue";
+import axios from 'axios';
+
 export default {
   name: "SelectView",
+  components: {
+      NavHeader
+  },
   data() {
       return {
-          charts: [
-              choreChart
-          ]
+          charts: []
       }
   },
+  created() {
+      this.getCharts()
+  },
+  methods: {
+      async getCharts() {
+          try {
+              const resp = await axios.get('/api/charts')
+              console.log(resp.data)
+              this.charts = resp.data
+          } catch(err) {
+              console.log(err)
+          }
+      }
+  }
 };
 </script>
 
 <style scoped>
 .select {
-    border: 1px solid black;
+    color: var(--green);
 }
 </style>
